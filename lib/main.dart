@@ -6,7 +6,7 @@ void main() {
   runApp(const MyApp());
 }
 
-final List<Transactions> TransactionsList = [
+final List<Transactions> transactionsList = [
   Transactions(
     keterangan: 'Penjualan hari senin',
     masuk: true,
@@ -74,7 +74,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: TransactionPage(TransactionsList: TransactionsList),
+      home: TransactionPage(TransactionsList: transactionsList),
     );
   }
 }
