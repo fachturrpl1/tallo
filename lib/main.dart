@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '/models/transactions.dart';
-import 'pages/transactions_page.dart';
+import 'features/models/transactions.dart';
+import 'features/pages/transactions_page.dart';
 
 void main() {
   runApp(const MyApp());

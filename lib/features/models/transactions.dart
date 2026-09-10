@@ -50,10 +50,10 @@ String kategoriLabel(String kode) {
   }
 }
 
-int hitungSaldo(List<Transactions> TransactionsList) {
+int hitungSaldo(List<Transactions> transactionsList) {
   int saldo = 0;
 
-  for (Transactions transaksi in TransactionsList) {
+  for (Transactions transaksi in transactionsList) {
     if (transaksi.jumlah <= 0) {
       print('jumlah tidak valid');
       continue;

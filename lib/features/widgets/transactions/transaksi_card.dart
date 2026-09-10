@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tallo/models/transactions.dart';
-import '../../main.dart';
+import 'package:tallo/features/models/transactions.dart';
+import '../../../main.dart';
 
 class TransactionCard extends StatelessWidget {
   final String keterangan;

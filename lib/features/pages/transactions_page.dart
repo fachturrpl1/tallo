@@ -3,7 +3,7 @@ import '../widgets/transactions/transaction_search_bar.dart';
 import '../widgets/transactions/transaction_category_filter.dart';
 import '../widgets/transactions/dropdown/transaction_dropdown_filter.dart';
 import '../widgets/transactions/transaksi_card.dart';
-import '../../models/transactions.dart';
+import '../models/transactions.dart';
 
 class TransactionPage extends StatefulWidget {
   final List<Transactions> TransactionsList;
