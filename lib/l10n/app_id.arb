@@ -1,0 +1,74 @@
+{
+  "@@locale": "id",
+
+  "appTitle": "Tallo",
+  "appTagline": "Ketahui arus uangmu.",
+
+  "onboardingTitle": "Kelola keuangan usaha jadi lebih mudah",
+  "onboardingSubtitle": "Catat pemasukan dan pengeluaran bisnismu, kapan saja dan di mana saja.",
+
+  "buttonStart": "Mulai",
+
+  "homeGreeting": "Halo, {name}",
+  "homeSubGreeting": "Semangat terus untuk usahamu!",
+
+  "currentBalance": "Saldo Saat Ini",
+
+  "totalIncome": "Masuk",
+  "totalExpense": "Keluar",
+
+  "amountValue": "Rp {amount}",
+
+  "menuAdd": "Tambah",
+  "menuCategory": "Kategori",
+  "menuReport": "Laporan",
+  "menuMore": "Lainnya",
+
+  "recentTransactions": "Transaksi Terbaru",
+  "seeAll": "Lihat Semua",
+
+  "navHome": "Beranda",
+  "navTransaction": "Transaksi",
+  "navAccount": "Akun",
+
+  "addTransactionTitle": "Tambah Transaksi",
+  "tabIncome": "Masuk",
+  "tabExpense": "Keluar",
+
+  "fieldCategory": "Kategori",
+  "fieldAmount": "Jumlah",
+  "fieldDate": "Tanggal",
+  "fieldNoteOptional": "Keterangan (Opsional)",
+  "fieldNoteHint": "Contoh: Penjualan produk hari ini",
+
+  "buttonSave": "Simpan",
+  "buttonEdit": "Edit",
+  "buttonDelete": "Hapus",
+
+  "searchHint": "Cari transaksi...",
+
+  "filterAll": "Semua",
+  "filterIncome": "Masuk",
+  "filterExpense": "Keluar",
+
+  "filterAllCategory": "Semua Kategori",
+  "filterLatest": "Terbaru",
+
+  "emptyTransactionTitle": "Belum ada transaksi",
+  "emptyTransactionSubtitle": "Catat pemasukan atau pengeluaran pertama untuk mulai melihat arus uangmu.",
+
+  "itemCount": "{count, plural, =0{Tidak ada barang} other{{count} barang}}",
+
+  "lastNDays": "{count, plural, other{{count} hari terakhir}}",
+
+  "dateRange": "{start} - {end}",
+
+  "reportTotalIncome": "Total Pemasukan",
+  "reportTotalExpense": "Total Pengeluaran",
+  "reportDifference": "Selisih",
+
+  "expenseByCategory": "Kategori Pengeluaran",
+
+  "confirmDeleteTitle": "Hapus transaksi?",
+  "confirmDeleteMessage": "Tindakan ini tidak bisa dibatalkan. Yakin ingin menghapus {itemName}?"
+}

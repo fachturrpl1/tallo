@@ -1,0 +1,135 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Tallo",
+  "@appTitle": {
+    "description": "The title of the application, shown on splash screen and app bar"
+  },
+
+  "appTagline": "Know your money flow.",
+  "@appTagline": {
+    "description": "Tagline shown under the app logo"
+  },
+
+  "onboardingTitle": "Manage your business finances more easily",
+  "onboardingSubtitle": "Record income and expenses anytime, anywhere.",
+
+  "buttonStart": "Start",
+  "@buttonStart": {
+    "description": "Button label to begin onboarding flow"
+  },
+
+  "homeGreeting": "Hello, {name}",
+  "@homeGreeting": {
+    "description": "Greeting shown at the top of the home page",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Andi"
+      }
+    }
+  },
+
+  "homeSubGreeting": "Keep up the great work with your business!",
+
+  "currentBalance": "Current Balance",
+
+  "totalIncome": "Income",
+  "totalExpense": "Expense",
+
+  "amountValue": "Rp {amount}",
+  "@amountValue": {
+    "description": "Displays a rupiah amount with formatting already applied by the caller",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "200.000"
+      }
+    }
+  },
+
+  "menuAdd": "Add",
+  "menuCategory": "Category",
+  "menuReport": "Report",
+  "menuMore": "More",
+
+  "recentTransactions": "Recent Transactions",
+  "seeAll": "See All",
+
+  "navHome": "Home",
+  "navTransaction": "Transaction",
+  "navAccount": "Account",
+
+  "addTransactionTitle": "Add Transaction",
+  "tabIncome": "In",
+  "tabExpense": "Out",
+
+  "fieldCategory": "Category",
+  "fieldAmount": "Amount",
+  "fieldDate": "Date",
+  "fieldNoteOptional": "Note (Optional)",
+  "fieldNoteHint": "e.g. Sale of today's products",
+
+  "buttonSave": "Save",
+  "buttonEdit": "Edit",
+  "buttonDelete": "Delete",
+
+  "searchHint": "Search transactions...",
+
+  "filterAll": "All",
+  "filterIncome": "In",
+  "filterExpense": "Out",
+
+  "filterAllCategory": "All Categories",
+  "filterLatest": "Latest",
+
+  "emptyTransactionTitle": "No transactions yet",
+  "emptyTransactionSubtitle": "Record your first income or expense to start seeing your cash flow.",
+
+  "itemCount": "{count, plural, =0{No items} one{{count} item} other{{count} items}}",
+  "@itemCount": {
+    "description": "Shown for stock count or list item count",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+
+  "lastNDays": "Last {count, plural, one{{count} day} other{{count} days}}",
+  "@lastNDays": {
+    "description": "Used in report page header, e.g. 'Last 7 days'",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "dateRange": "{start} - {end}",
+  "@dateRange": {
+    "description": "A formatted date range, both values are pre-formatted strings",
+    "placeholders": {
+      "start": { "type": "String" },
+      "end": { "type": "String" }
+    }
+  },
+
+  "reportTotalIncome": "Total Income",
+  "reportTotalExpense": "Total Expense",
+  "reportDifference": "Difference",
+
+  "expenseByCategory": "Expense by Category",
+
+  "confirmDeleteTitle": "Delete transaction?",
+  "confirmDeleteMessage": "This action cannot be undone. Are you sure you want to delete {itemName}?",
+  "@confirmDeleteMessage": {
+    "placeholders": {
+      "itemName": {
+        "type": "String",
+        "example": "Sale of the day"
+      }
+    }
+  }
+}
