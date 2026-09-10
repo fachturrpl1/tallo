@@ -6,9 +6,9 @@ import '../widgets/transactions/transaksi_card.dart';
 import '../../models/transactions.dart';
 
 class TransactionPage extends StatefulWidget {
-  final List<Transactions> daftarTransaksi;
+  final List<Transactions> TransactionsList;
 
-  const TransactionPage({super.key, required this.daftarTransaksi});
+  const TransactionPage({super.key, required this.TransactionsList});
 
   @override
   State<TransactionPage> createState() => _TransactionPageState();
@@ -26,7 +26,7 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   List<Transactions> get _hasilFilter {
-    return widget.daftarTransaksi.where((t) {
+    return widget.TransactionsList.where((t) {
       final cocokJenis = _selectedType == 'Semua' || t.jenisLabel == _selectedType;
       final cocokCari = t.keterangan.toLowerCase().contains(_searchQuery);
       return cocokJenis && cocokCari;
@@ -114,6 +114,7 @@ class _TransactionPageState extends State<TransactionPage> {
                 );
               },
             ),
+
           )
         ]
       ),
