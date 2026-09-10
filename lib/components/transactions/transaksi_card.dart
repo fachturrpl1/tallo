@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import '../main.dart';
+import 'package:tallo/models/transactions.dart';
+import '../../main.dart';
 
-class TransaksiCard extends StatelessWidget {
+class TransactionCard extends StatelessWidget {
   final String keterangan;
   final String jenis;
   final String kategori;
   final int jumlah;
   final String tanggal;
 
-  TransaksiCard({
+  TransactionCard({
     super.key,
     required this.keterangan,
     required this.jenis,
