@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:tallo/features/pages/splashscreen.dart';
 import 'features/models/transactions.dart';
 import 'features/pages/transactions_page.dart';
+import 'core/theme/theme_controller.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const TalloApp());
 }
 
 final List<Transactions> transactionsList = [
@@ -68,13 +70,30 @@ final List<Transactions> transactionsList = [
   ),
 ];
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class TalloApp extends StatelessWidget {
+  const TalloApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: TransactionPage(TransactionsList: transactionsList),
+      debugShowCheckedModeBanner: false,
+
+      theme: ThemeData(
+        extensions: const <ThemeExtension<dynamic>>[
+          AppColors.light,
+        ],
+      ),
+
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        extensions: const <ThemeExtension<dynamic>>[
+          AppColors.dark,
+        ],
+      ),
+
+      themeMode: ThemeMode.system,
+
+      home: const SplashScreen()
     );
   }
 }
