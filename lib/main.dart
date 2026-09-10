@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'transactions/transaction_search_bar.dart';
+import 'transactions/transaction_category_filter.dart';
+import 'transactions/dropdown/transaction_dropdown_filter.dart';
+import 'transactions/transaksi_card.dart';
 
 class Transaksi {
   final String keterangan;
@@ -168,7 +172,45 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Buku Kas',
+      title: 'Tallo',
+      home: Scaffold(
+        appBar: AppBar(),
+        body: Column(
+          children: [
+            TransactionSearchBar(
+              controller: TextEditingController(),
+              onChanged: (value) {
+                // Handle search input change
+              },
+            ),
+            TransactionCategoryFilter(
+              types: ['Semua','Masuk', 'Keluar'],
+              selectedType: 'Semua',
+              onTypeSelected: (jenis) {
+                // Handle category selection
+              },
+            ),
+            Row(
+              children: [
+                TransactionFilterDropdown(
+                  label: 'Semua Kategori',
+                  prefixIcon: Icons.filter_list,
+                  onTap: () {
+                  // Handle dropdown tap
+                  },
+                ),
+                TransactionFilterDropdown(
+                  label: 'Terbaru',
+                  prefixIcon: Icons.calendar_today,
+                  onTap: () {
+                    // Handle dropdown tap
+                  },
+                ),
+              ],
+            ),
+          ],
+        )
+      ),
     );
   }
 }
