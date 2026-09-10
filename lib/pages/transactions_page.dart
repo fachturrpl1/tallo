@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../components/transactions/transaction_search_bar.dart';
-import '../../components/transactions/transaction_category_filter.dart';
-import '../../components/transactions/dropdown/transaction_dropdown_filter.dart';
-import '../../components/transactions/transaksi_card.dart';
+import '../widgets/transactions/transaction_search_bar.dart';
+import '../widgets/transactions/transaction_category_filter.dart';
+import '../widgets/transactions/dropdown/transaction_dropdown_filter.dart';
+import '../widgets/transactions/transaksi_card.dart';
 import '../../models/transactions.dart';
 
 class TransactionPage extends StatefulWidget {
@@ -39,57 +39,83 @@ class _TransactionPageState extends State<TransactionPage> {
       appBar: AppBar(title: const Text('Transaksi')),
       body: Column(
         children: [
-          TransactionSearchBar(
-            controller: _searchController,
-            onChanged: (value) {
-              setState(() {
-                _searchQuery = value.toLowerCase();
-              });
-            },
-          ),
-          TransactionCategoryFilter(
-            types: const ['Semua', 'Masuk', 'Keluar'],
-            selectedType: _selectedType,
-            onTypeSelected: (jenis) {
-              setState(() {
-                _selectedType = jenis;
-              });
-            },
-          ),
-          Row(
-            children: [
-              TransactionFilterDropdown(
-                label: 'Semua Kategori',
-                prefixIcon: Icons.filter_list,
-                onTap: () {
-                  // Handle dropdown tap
-                },
-              ),
-              TransactionFilterDropdown(
-                label: 'Terbaru',
-                prefixIcon: Icons.calendar_today,
-                onTap: () {
-                  // Handle dropdown tap
-                },
-              ),
-            ],
-          ),
           Expanded(
-            child: ListView.builder(
-              itemCount: _hasilFilter.length,
-              itemBuilder: (context, index) {
-                final t = _hasilFilter[index];
-                return TransactionCard(
-                  keterangan: '', 
-                  jenis: '', 
-                  kategori: '', 
-                  jumlah: 0, 
-                  tanggal: '',
-                  ); // sesuaikan dengan parameter TransaksiCard-mu
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                const horizontalPadding = 16.0;
+
+                final contentWidth =
+                    constraints.maxWidth - (horizontalPadding * 2);
+
+                final searchWidth = contentWidth < 600
+                    ? contentWidth
+                    : 600.0;
+
+                return Padding(
+                  padding: const EdgeInsets.all(horizontalPadding),
+                  child: Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 16,
+                    runSpacing: 16,
+                    children: [
+                      SizedBox(
+                        width: searchWidth,
+                        child: TransactionSearchBar(
+                          controller: _searchController,
+                          onChanged: (value) {
+                            setState(() {
+                              _searchQuery = value.toLowerCase();
+                            });
+                          },
+                        ),
+                      ),
+
+                      Wrap(
+                        alignment: WrapAlignment.spaceBetween,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 12,
+                        runSpacing: 12,
+                        children: [
+                          TransactionCategoryFilter(
+                            types: const [
+                              'Semua',
+                              'Masuk',
+                              'Keluar',
+                            ],
+                            selectedType: _selectedType,
+                            onTypeSelected: (jenis) {
+                              setState(() {
+                                _selectedType = jenis;
+                              });
+                            },
+                          ),
+
+                          Wrap(
+                            spacing: 12,
+                            runSpacing: 12,
+                            children: [
+                              TransactionFilterDropdown(
+                                label: 'Semua Kategori',
+                                prefixIcon: Icons.filter_list,
+                                onTap: () {},
+                              ),
+                              TransactionFilterDropdown(
+                                label: 'Terbaru',
+                                prefixIcon: Icons.calendar_today,
+                                onTap: () {},
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
               },
             ),
-          ),
-        ],
+          )
+        ]
       ),
     );
   }
