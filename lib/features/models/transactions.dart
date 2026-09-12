@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import '../../core/theme/theme_controller.dart';
+
 class Transactions {
   final String keterangan;
   final bool masuk;        // diganti ke bool, lebih tepat untuk dibandingkan sebagai jenis transaksi
@@ -34,19 +37,68 @@ class Transactions {
     }
     return '$dd/$mm/$yyyy';
   }
-}
+  // switchcase kategori
+  String get kategoriLabel {
+    switch (kategori) {
+      case '1':
+        return 'Penjualan';
+      case '2':
+        return 'Belanja';
+      case '3':
+        return 'Operasional';
+      default:
+        return 'Kategori tidak valid';
+    }
+  }
 
-// switchcase kategori
-String kategoriLabel(String kode) {
-  switch (kode) {
-    case '1':
-      return 'Penjualan';
-    case '2':
-      return 'Belanja';
-    case '3':
-      return 'Operasional';
-    default:
-      return 'Kategori tidak valid';
+  // 2. Ikon Kategori murni berdasarkan kodeKategori
+  IconData get icon {
+    switch (kategori) {
+      case '1':
+        return Icons.point_of_sale_rounded;
+      case '2':
+        return Icons.shopping_bag_outlined;
+      case '3':
+        return Icons.business_center_rounded;
+      default:
+        return Icons.category_rounded;
+    }
+  }
+
+  // 3. Warna Ikon murni berdasarkan kodeKategori (Tidak peduli masuk/keluar)
+  Color categoryColor(BuildContext context) {
+    final appColors = Theme.of(context).extension<AppColors>()!;
+    switch (kategori) {
+      case '1':
+        return appColors.green;
+      case '2':
+        return appColors.red;
+      case '3':
+        return appColors.blue;
+      default:
+        return appColors.primary;
+    }
+  }
+
+  // 4. Warna Background Ikon murni berdasarkan kodeKategori
+  Color categoryBgColor(BuildContext context) {
+    final appColors = Theme.of(context).extension<AppColors>()!;
+    switch (kategori) {
+      case '1':
+        return appColors.greenBg;
+      case '2':
+        return appColors.redBg;
+      case '3':
+        return appColors.blueBg;
+      default:
+        return appColors.terliary;
+    }
+  }
+
+  // 5. Warna khusus nominal Uang (Satu-satunya yang masih bergantung pada jenis transaksi)
+  Color amountColor(BuildContext context) {
+    final appColors = Theme.of(context).extension<AppColors>()!;
+    return masuk ? appColors.green : appColors.red;
   }
 }
 
