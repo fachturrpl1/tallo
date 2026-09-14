@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
 
 class TransactionCategoryFilter extends StatelessWidget {
   final List<String> types;
@@ -15,7 +14,6 @@ class TransactionCategoryFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appColors = Theme.of(context).extension<AppColors>()!;
     final colorScheme = Theme.of(context).colorScheme;
 
     return SingleChildScrollView(

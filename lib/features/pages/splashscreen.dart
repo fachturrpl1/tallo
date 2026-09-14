@@ -35,8 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final appColors= Theme.of(context).extension<AppColors>()!;
-
+    
     return Scaffold(
       backgroundColor: colorScheme.primary,
       body: SafeArea(

@@ -20,6 +20,7 @@ class _TransactionPageState extends State<TransactionsPage> {
   bool? _selectedMasuk;
   String _searchQuery = '';
   SortOrder _sortOrder = SortOrder.latest;
+  String? _selectedCategory;
 
   String get _sortLabel =>
     _sortOrder == SortOrder.latest ? 'Terbaru' : 'Terlama'; 
