@@ -3,6 +3,7 @@ import 'package:tallo/features/widgets/transactions/transaction_emptystate.dart'
 import '../widgets/transactions/transaction_search_bar.dart';
 import '../widgets/transactions/transaction_category_filter.dart';
 import '../widgets/transactions/dropdown/transaction_dropdown_filter.dart';
+import '../widgets/dashboard/overview.dart';
 import '../widgets/transactions/card/transactions_card.dart';
 import '../models/transactions.dart';
 
@@ -159,6 +160,10 @@ class _TransactionPageState extends State<TransactionsPage> {
       ),
       body: Column(
         children: [
+          DashboardOverview(
+            transactions: widget.transactionsList,
+            margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
+          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: LayoutBuilder(

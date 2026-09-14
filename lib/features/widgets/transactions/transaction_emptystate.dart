@@ -22,16 +22,18 @@ class TransactionEmptyState extends StatelessWidget {
         ? 'assets/empty_state_dark.png'
         : 'assets/empty_state_light.png';
 
-    return Center(
+    return Align(
+      alignment: Alignment.topCenter, // Memastikan konten rata atas-tengah
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32),
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24), // Tambahkan padding atas jika perlu
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start, // Mengisi dari atas ke bawah
           children: [
             Image.asset(
               imagePath,
               width: 160,
-              fit: BoxFit.contain,
+              fit: BoxFit.contain, // Nilai default fit jika sebelumnya kosong
             ),
             const SizedBox(height: 24),
             Text(
