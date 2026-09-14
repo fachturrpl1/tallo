@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/theme/theme_controller.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../models/transactions.dart';
 
 class TransactionCard extends StatelessWidget {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/theme_controller.dart';
+import '../../core/theme/app_theme.dart';
+import '../../core/theme/app_colors.dart';
 
 class Transactions {
   final String keterangan;
@@ -68,6 +69,7 @@ class Transactions {
   // 3. Warna Ikon murni berdasarkan kodeKategori (Tidak peduli masuk/keluar)
   Color categoryColor(BuildContext context) {
     final appColors = Theme.of(context).extension<AppColors>()!;
+    final colorScheme = Theme.of(context).colorScheme;
     switch (kategori) {
       case '1':
         return appColors.green;
@@ -76,12 +78,13 @@ class Transactions {
       case '3':
         return appColors.blue;
       default:
-        return appColors.primary;
+        return colorScheme.primary;
     }
   }
 
   // 4. Warna Background Ikon murni berdasarkan kodeKategori
   Color categoryBgColor(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final appColors = Theme.of(context).extension<AppColors>()!;
     switch (kategori) {
       case '1':
@@ -91,7 +94,7 @@ class Transactions {
       case '3':
         return appColors.blueBg;
       default:
-        return appColors.terliary;
+        return colorScheme.tertiary;
     }
   }
 

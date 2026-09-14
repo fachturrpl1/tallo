@@ -12,7 +12,7 @@ class AppTheme {
       secondary: Color(0xFF18B9AC),
       tertiary: Color(0xFFCCF2EA),
       surface: Color(0xFFF8FAFC),   // pengganti mainBg
-      outlineVariant: Color(0xFFE2E8F0), // pengganti border
+      outlineVariant: Color(0xFFE2E8F0),
     ),
     textTheme: GoogleFonts.poppinsTextTheme(),
     scaffoldBackgroundColor: const Color(0xFFF8FAFC),

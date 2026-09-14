@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/theme_controller.dart';
+import '../../../core/theme/app_colors.dart';
 
 class TransactionCategoryFilter extends StatelessWidget {
   final List<String> types;
@@ -29,7 +29,7 @@ class TransactionCategoryFilter extends StatelessWidget {
               label: Text(type),
               selected: isSelected,
               onSelected: (_) => onTypeSelected(type),
-              selectedColor: appColors.primary, // Warna utama sesuai AppColors Theme
+              selectedColor: colorScheme.primary, // Warna utama sesuai AppColors Theme
               backgroundColor: colorScheme.surfaceVariant, // Menyesuaikan mode terang/gelap
               labelStyle: TextStyle(
                 color: isSelected ? Colors.white : colorScheme.onSurface,
@@ -38,7 +38,7 @@ class TransactionCategoryFilter extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
                 side: BorderSide(
-                  color: isSelected ? Colors.transparent : appColors.border,
+                  color: isSelected ? Colors.transparent : colorScheme.outlineVariant,
                 ),
               ),
               showCheckmark: false,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/theme_controller.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme.dart';
 
 class TransactionSearchBar extends StatelessWidget {
   final TextEditingController controller;
@@ -21,7 +22,7 @@ class TransactionSearchBar extends StatelessWidget {
         color: colorScheme.surfaceVariant, // Warna latar adaptif tema
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: appColors.border, // Border halus mengikuti konteks tema
+          color: colorScheme.outlineVariant,
         ),
       ),
       child: TextField(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/theme_controller.dart';
+import '../../core/theme/app_colors.dart';
 import '../models/transactions.dart';
 import 'transactions_page.dart';
 
@@ -34,10 +34,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
+    final colorScheme = Theme.of(context).colorScheme;
+    final appColors= Theme.of(context).extension<AppColors>()!;
 
     return Scaffold(
-      backgroundColor: colors.primary,
+      backgroundColor: colorScheme.primary,
       body: SafeArea(
         child: Align(
           alignment: const Alignment(0, -0.2),

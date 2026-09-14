@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/theme_controller.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class TransactionFilterDropdown extends StatelessWidget {
   final String label;
@@ -27,7 +27,7 @@ class TransactionFilterDropdown extends StatelessWidget {
           color: colorScheme.surface, // Mengikuti latar belakang kartu/komponen
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: appColors.border, // Menggunakan warna border dari AppColors
+            color: colorScheme.outlineVariant,
           ),
         ),
         child: Row(
