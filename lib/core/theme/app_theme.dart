@@ -29,7 +29,7 @@ class AppTheme {
       surface: Color(0xFF0F172A),
       outlineVariant: Color(0xFF334155),
     ),
-    textTheme: GoogleFonts.plusJakartaSansTextTheme(ThemeData.dark().textTheme),
+    textTheme: GoogleFonts.poppinsTextTheme(hemeData.dark().textTheme),
     scaffoldBackgroundColor: const Color(0xFF0F172A),
     extensions: const [AppColors.dark],
   );
