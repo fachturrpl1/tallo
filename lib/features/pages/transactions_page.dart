@@ -5,6 +5,7 @@ import '../widgets/transactions/transaction_category_filter.dart';
 import '../widgets/transactions/dropdown/transaction_dropdown_filter.dart';
 import '../widgets/transactions/card/transactions_card.dart';
 import '../models/transactions.dart';
+import '../models/transaction_sort.dart';
 
 class TransactionsPage extends StatefulWidget {
   final List<Transactions> transactionsList;
@@ -15,10 +16,6 @@ class TransactionsPage extends StatefulWidget {
   State<TransactionsPage> createState() => _TransactionPageState();
 }
 
-enum DateSortOrder { latest, oldest }
-enum PriceSortOrder { highest, lowest }
-enum _SortPriority { date, price}
-
 class _TransactionPageState extends State<TransactionsPage> {
   final TextEditingController _searchController = TextEditingController();
 
@@ -27,7 +24,7 @@ class _TransactionPageState extends State<TransactionsPage> {
 
   DateSortOrder _dateOrder = DateSortOrder.latest;
   PriceSortOrder? _priceSort;
-  _SortPriority _sortPriority = _SortPriority.date;
+  SortPriority _sortPriority = SortPriority.date;
 
   String? _selectedCategory;
 
@@ -83,7 +80,7 @@ class _TransactionPageState extends State<TransactionsPage> {
     }
 
     hasil.sort((a, b) {
-      if (_sortPriority == _SortPriority.price && _priceSort != null) {
+      if (_sortPriority == SortPriority.price && _priceSort != null) {
         final primary = compareByPrice(a, b);
         return primary != 0 ? primary : compareByDate(a, b);
       } else {
@@ -123,7 +120,7 @@ class _TransactionPageState extends State<TransactionsPage> {
     if (result != null) {
       setState(() {
         _dateOrder = result;
-        _sortPriority = _SortPriority.date;
+        _sortPriority = SortPriority.date;
       });
     }
   }
@@ -143,7 +140,7 @@ class _TransactionPageState extends State<TransactionsPage> {
 
     setState(() {
       _priceSort = result;
-      _sortPriority = result != null ? _SortPriority.price : _SortPriority.date;
+      _sortPriority = result != null ? SortPriority.price : SortPriority.date;
     });
   }
 
