@@ -3,7 +3,6 @@ import 'package:tallo/features/widgets/transactions/transaction_emptystate.dart'
 import '../widgets/transactions/transaction_search_bar.dart';
 import '../widgets/transactions/transaction_category_filter.dart';
 import '../widgets/transactions/dropdown/transaction_dropdown_filter.dart';
-import '../widgets/dashboard/overview.dart';
 import '../widgets/transactions/card/transactions_card.dart';
 import '../models/transactions.dart';
 
@@ -16,19 +15,34 @@ class TransactionsPage extends StatefulWidget {
   State<TransactionsPage> createState() => _TransactionPageState();
 }
 
-enum SortOrder { latest, oldest }
+enum DateSortOrder { latest, oldest }
+enum PriceSortOrder { highest, lowest }
+enum _SortPriority { date, price}
 
 class _TransactionPageState extends State<TransactionsPage> {
   final TextEditingController _searchController = TextEditingController();
+
   bool? _selectedMasuk;
   String _searchQuery = '';
-  SortOrder _sortOrder = SortOrder.latest;
+
+  DateSortOrder _dateOrder = DateSortOrder.latest;
+  PriceSortOrder? _priceSort;
+  _SortPriority _sortPriority = _SortPriority.date;
+
   String? _selectedCategory;
 
-  String get _sortLabel =>
-      _sortOrder == SortOrder.latest ? 'Terbaru' : 'Terlama';
+  String get _sortLabel {
+    return _dateOrder == DateSortOrder.latest ? 'Terbaru' : 'Terlama';
+  }
 
-  // Helper untuk menentukan label tombol dropdown kategori
+  String get _priceSortLabel {
+    return switch (_priceSort) {
+      PriceSortOrder.highest => 'Tertinggi',
+      PriceSortOrder.lowest => 'Terendah',
+      null => 'Harga',
+    };
+  }
+
   String get _categoryLabel {
     if (_selectedCategory == null) return 'Semua Kategori';
     return Transactions.categoriesOption
@@ -47,71 +61,94 @@ class _TransactionPageState extends State<TransactionsPage> {
 
   List<Transactions> get _hasilFilter {
     final hasil = widget.transactionsList.where((t) {
-      // 1. Filter Jenis (Masuk / Keluar)
-      final bool cocokJenis =
-          _selectedMasuk == null || t.masuk == _selectedMasuk;
-
-      // 2. Filter Pencarian Teks
+      final bool cocokJenis = _selectedMasuk == null || t.masuk == _selectedMasuk;
       final String query = _searchQuery.trim().toLowerCase();
-      final bool cocokCari =
-          query.isEmpty || t.keterangan.toLowerCase().contains(query);
-
-      // 3. Filter Kategori (Diterapkan di sini)
+      final bool cocokCari = query.isEmpty || t.keterangan.toLowerCase().contains(query);
       final bool cocokKategori =
           _selectedCategory == null || t.kategori == _selectedCategory;
-
       return cocokJenis && cocokCari && cocokKategori;
     }).toList();
 
-    // Urutkan berdasarkan tanggal
-    hasil.sort((a, b) => _sortOrder == SortOrder.latest
-        ? b.tanggal.compareTo(a.tanggal)
-        : a.tanggal.compareTo(b.tanggal));
+    int compareByDate(Transactions a, Transactions b) {
+      return _dateOrder == DateSortOrder.latest
+          ? b.tanggal.compareTo(a.tanggal)
+          : a.tanggal.compareTo(b.tanggal);
+    }
+
+    int compareByPrice(Transactions a, Transactions b) {
+      if (_priceSort == null) return 0; // tidak berpengaruh kalau tidak aktif
+      return _priceSort == PriceSortOrder.highest
+          ? b.jumlah.compareTo(a.jumlah)
+          : a.jumlah.compareTo(b.jumlah);
+    }
+
+    hasil.sort((a, b) {
+      if (_sortPriority == _SortPriority.price && _priceSort != null) {
+        final primary = compareByPrice(a, b);
+        return primary != 0 ? primary : compareByDate(a, b);
+      } else {
+        final primary = compareByDate(a, b);
+        return primary != 0 ? primary : compareByPrice(a, b);
+      }
+    });
 
     return hasil;
   }
 
-  Future<void> _showSortMenu(BuildContext context) async {
+  RelativeRect _menuPositionOf(BuildContext context) {
     final RenderBox button = context.findRenderObject() as RenderBox;
     final RenderBox overlay =
         Overlay.of(context).context.findRenderObject() as RenderBox;
-    final position = RelativeRect.fromRect(
+    return RelativeRect.fromRect(
       Rect.fromPoints(
-        button.localToGlobal(Offset(0, button.size.height + 4),
-            ancestor: overlay),
-        button.localToGlobal(button.size.bottomRight(Offset.zero),
-            ancestor: overlay),
+        button.localToGlobal(Offset(0, button.size.height + 4), ancestor: overlay),
+        button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
       ),
       Offset.zero & overlay.size,
     );
+  }
 
-    final result = await showMenu<SortOrder>(
+  Future<void> _showSortMenu(BuildContext context) async {
+    final position = _menuPositionOf(context);
+
+    final result = await showMenu<DateSortOrder>(
       context: context,
       position: position,
       items: const [
-        PopupMenuItem(value: SortOrder.latest, child: Text('Terbaru')),
-        PopupMenuItem(value: SortOrder.oldest, child: Text('Terlama')),
+        PopupMenuItem(value: DateSortOrder.latest, child: Text('Terbaru')),
+        PopupMenuItem(value: DateSortOrder.oldest, child: Text('Terlama')),
       ],
     );
 
     if (result != null) {
-      setState(() => _sortOrder = result);
+      setState(() {
+        _dateOrder = result;
+        _sortPriority = _SortPriority.date;
+      });
     }
   }
 
-  Future<void> _showCategoriesMenu(BuildContext context) async {
-    final RenderBox button = context.findRenderObject() as RenderBox;
-    final RenderBox overlay =
-        Overlay.of(context).context.findRenderObject() as RenderBox;
-    final position = RelativeRect.fromRect(
-      Rect.fromPoints(
-        button.localToGlobal(Offset(0, button.size.height + 4),
-            ancestor: overlay),
-        button.localToGlobal(button.size.bottomRight(Offset.zero),
-            ancestor: overlay),
-      ),
-      Offset.zero & overlay.size,
+  Future<void> _showPriceSortMenu(BuildContext context) async {
+    final position = _menuPositionOf(context);
+
+    final result = await showMenu<PriceSortOrder?>(
+      context: context,
+      position: position,
+      items: const [
+        PopupMenuItem(value: null, child: Text('Tidak diurutkan')),
+        PopupMenuItem(value: PriceSortOrder.highest, child: Text('Harga Tertinggi')),
+        PopupMenuItem(value: PriceSortOrder.lowest, child: Text('Harga Terendah')),
+      ],
     );
+
+    setState(() {
+      _priceSort = result;
+      _sortPriority = result != null ? _SortPriority.price : _SortPriority.date;
+    });
+  }
+
+  Future<void> _showCategoriesMenu(BuildContext context) async {
+    final position = _menuPositionOf(context);
 
     final result = await showMenu<String?>(
       context: context,
@@ -160,10 +197,6 @@ class _TransactionPageState extends State<TransactionsPage> {
       ),
       body: Column(
         children: [
-          DashboardOverview(
-            transactions: widget.transactionsList,
-            margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
-          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: LayoutBuilder(
@@ -215,6 +248,13 @@ class _TransactionPageState extends State<TransactionsPage> {
                                 label: _sortLabel,
                                 prefixIcon: Icons.calendar_today,
                                 onTap: () => _showSortMenu(context),
+                              ),
+                            ),
+                            Builder(
+                              builder: (context) => TransactionFilterDropdown(
+                                label: _priceSortLabel,
+                                prefixIcon: Icons.swap_vert,
+                                onTap: () => _showPriceSortMenu(context),
                               ),
                             ),
                           ],
