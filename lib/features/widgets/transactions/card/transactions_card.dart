@@ -27,7 +27,7 @@ class TransactionCard extends StatelessWidget {
         side: BorderSide.none,
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
         leading: CircleAvatar(
           radius: 20,
           backgroundColor: transaction.categoryBgColor(context),
