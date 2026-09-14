@@ -11,7 +11,7 @@ class AppTheme {
       primary: Color(0xFF0F766E),
       secondary: Color(0xFF18B9AC),
       tertiary: Color(0xFFCCF2EA),
-      surface: Color(0xFFF8FAFC),   // pengganti mainBg
+      surface: Color(0xFFF8FAFC),
       outlineVariant: Color(0xFFE2E8F0),
     ),
     textTheme: GoogleFonts.poppinsTextTheme(),
@@ -29,7 +29,7 @@ class AppTheme {
       surface: Color(0xFF0F172A),
       outlineVariant: Color(0xFF334155),
     ),
-    textTheme: GoogleFonts.poppinsTextTheme(hemeData.dark().textTheme),
+    textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
     scaffoldBackgroundColor: const Color(0xFF0F172A),
     extensions: const [AppColors.dark],
   );

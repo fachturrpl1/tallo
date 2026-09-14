@@ -13,12 +13,16 @@ class TransactionsPage extends StatefulWidget {
   @override
   State<TransactionsPage> createState() => _TransactionPageState();
 }
+enum SortOrder { latest, oldest}
+
 class _TransactionPageState extends State<TransactionsPage> {
   final TextEditingController _searchController = TextEditingController();
-  
-  // null = Semua, true = Masuk, false = Keluar
   bool? _selectedMasuk;
   String _searchQuery = '';
+  SortOrder _sortOrder = SortOrder.latest;
+
+  String get _sortLabel =>
+    _sortOrder == SortOrder.latest ? 'Terbaru' : 'Terlama'; 
 
   @override
   void dispose() {
@@ -27,19 +31,47 @@ class _TransactionPageState extends State<TransactionsPage> {
   }
 
   List<Transactions> get _hasilFilter {
-    print('total data masuk: ${widget.transactionsList.length}');
-    print('selectedMasuk: $_selectedMasuk, query: "$_searchQuery"');
-  
+    final hasil = widget.transactionsList.where((t) {
+        // Bandingkan langsung sebagai bool, tidak lewat String lagi
+        final bool cocokJenis = _selectedMasuk == null || t.masuk == _selectedMasuk;
 
-    return widget.transactionsList.where((t) {
-      // Bandingkan langsung sebagai bool, tidak lewat String lagi
-      final bool cocokJenis = _selectedMasuk == null || t.masuk == _selectedMasuk;
+        final String query = _searchQuery.trim().toLowerCase();
+        final bool cocokCari = query.isEmpty || t.keterangan.toLowerCase().contains(query);
 
-      final String query = _searchQuery.trim().toLowerCase();
-      final bool cocokCari = query.isEmpty || t.keterangan.toLowerCase().contains(query);
-
-      return cocokJenis && cocokCari;
+        return cocokJenis && cocokCari;
     }).toList();
+
+    hasil.sort((a, b) => _sortOrder == SortOrder.latest
+      ? b.tanggal.compareTo(a.tanggal)
+      : a.tanggal.compareTo(b.tanggal));
+
+    return hasil;
+  }
+
+  Future<void> _showSortMenu(BuildContext context) async {
+    final RenderBox button = context.findRenderObject() as RenderBox;
+    final RenderBox overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox;
+    final position = RelativeRect.fromRect(
+      Rect.fromPoints(
+        button.localToGlobal(Offset(0, button.size.height + 4), ancestor: overlay),
+        button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
+      ),
+      Offset.zero & overlay.size,
+    );
+
+    final result = await showMenu<SortOrder>(
+      context: context,
+      position: position,
+      items: const [
+        PopupMenuItem(value: SortOrder.latest, child: Text('Terbaru')),
+        PopupMenuItem(value: SortOrder.oldest, child: Text('Terlama')),
+      ],
+    );
+
+    if (result != null) {
+      setState(() => _sortOrder = result);
+    }
   }
 
   // helper untuk konversi label String dari UI -> bool? untuk state
@@ -121,11 +153,12 @@ class _TransactionPageState extends State<TransactionsPage> {
                               prefixIcon: Icons.filter_list,
                               onTap: () {},
                             ),
-                            TransactionFilterDropdown(
-                              label: 'Terbaru',
-                              prefixIcon: Icons.calendar_today,
-                              onTap: () {},
-                            ),
+                            Builder(
+                              builder:(context) => TransactionFilterDropdown(
+                                label: _sortLabel,
+                                prefixIcon: Icons.calendar_today,
+                                onTap: () => _showSortMenu(context)),
+                              )
                           ],
                         ),
                       ],
