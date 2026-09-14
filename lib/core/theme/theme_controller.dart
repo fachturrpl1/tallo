@@ -16,7 +16,7 @@ class AppColors extends ThemeExtension<AppColors> {
 
   final Color primary;
   final Color secondary;
-  final Color terliary;
+  final Color tertiary;
 
   const AppColors({
 
@@ -34,7 +34,7 @@ class AppColors extends ThemeExtension<AppColors> {
 
     required this.primary,
     required this.secondary,
-    required this.terliary,
+    required this.tertiary,
   });
 
   static const light = AppColors(
@@ -57,7 +57,7 @@ class AppColors extends ThemeExtension<AppColors> {
     // unchanged — brand colors
     primary: Color(0xFF0F766E),
     secondary: Color(0xFF18B9AC),
-    terliary: Color(0xFFCCF2EA),
+    tertiary: Color(0xFFCCF2EA),
   );
 
   static const dark = AppColors(
@@ -80,7 +80,7 @@ class AppColors extends ThemeExtension<AppColors> {
     // unchanged — brand colors
     primary: Color(0xFF0F766E),
     secondary: Color(0xFF18B9AC),
-    terliary: Color(0xFFCCF2EA),
+    tertiary: Color(0xFFCCF2EA),
   );
 
   @override
@@ -117,7 +117,7 @@ class AppColors extends ThemeExtension<AppColors> {
 
       primary: primary ?? this.primary,
       secondary: secondary ?? this.secondary,
-      terliary: terliary ?? this.terliary,
+      tertiary: terliary ?? this.tertiary,
     );
   }
 
@@ -145,7 +145,7 @@ class AppColors extends ThemeExtension<AppColors> {
 
       primary: Color.lerp(primary, other.primary, t)!,
       secondary: Color.lerp(secondary, other.secondary, t)!,
-      terliary: Color.lerp(terliary, other.terliary, t)!,
+      tertiary: Color.lerp(tertiary, other.tertiary, t)!,
     );
   }
 }
