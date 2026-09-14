@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/theme_controller.dart';
 
 class TransactionCategoryFilter extends StatelessWidget {
   final List<String> types;
@@ -14,6 +15,9 @@ class TransactionCategoryFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appColors = Theme.of(context).extension<AppColors>()!;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
@@ -25,17 +29,19 @@ class TransactionCategoryFilter extends StatelessWidget {
               label: Text(type),
               selected: isSelected,
               onSelected: (_) => onTypeSelected(type),
-              selectedColor: const Color(0xFF007A60), // Warna hijau sesuai UI
-              backgroundColor: Colors.grey[200],
+              selectedColor: appColors.primary, // Warna utama sesuai AppColors Theme
+              backgroundColor: colorScheme.surfaceVariant, // Menyesuaikan mode terang/gelap
               labelStyle: TextStyle(
-                color: isSelected ? Colors.white : Colors.black87,
+                color: isSelected ? Colors.white : colorScheme.onSurface,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
+                side: BorderSide(
+                  color: isSelected ? Colors.transparent : appColors.border,
+                ),
               ),
               showCheckmark: false,
-              side: BorderSide.none,
             ),
           );
         }).toList(),
