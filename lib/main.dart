@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:tallo/features/pages/splashscreen.dart';
 import 'features/models/transactions.dart';
-import 'features/pages/transactions_page.dart';
-import 'core/theme/app_colors.dart';
+import 'core/theme/app_theme.dart';
 
 void main() {
   runApp(const TalloApp());
@@ -78,17 +76,10 @@ class TalloApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        extensions: const <ThemeExtension<dynamic>>[
-          AppColors.light,
-        ],
-        textTheme: GoogleFonts.poppinsTextTheme()
-      ),
-      themeMode: ThemeMode.light,
-      // themeMode: ThemeMode.dark,
-      // themeMode: ThemeMode.system,      
-
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: ThemeMode.system,
       home: SplashScreen(transactionsList: transactionsList),
     );
   }
-} 
+}
