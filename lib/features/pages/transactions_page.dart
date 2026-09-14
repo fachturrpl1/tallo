@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tallo/features/widgets/transactions/transaction_emptystate.dart';
 import '../widgets/transactions/transaction_search_bar.dart';
 import '../widgets/transactions/transaction_category_filter.dart';
 import '../widgets/transactions/dropdown/transaction_dropdown_filter.dart';
@@ -13,7 +14,8 @@ class TransactionsPage extends StatefulWidget {
   @override
   State<TransactionsPage> createState() => _TransactionPageState();
 }
-enum SortOrder { latest, oldest}
+
+enum SortOrder { latest, oldest }
 
 class _TransactionPageState extends State<TransactionsPage> {
   final TextEditingController _searchController = TextEditingController();
@@ -23,7 +25,18 @@ class _TransactionPageState extends State<TransactionsPage> {
   String? _selectedCategory;
 
   String get _sortLabel =>
-    _sortOrder == SortOrder.latest ? 'Terbaru' : 'Terlama'; 
+      _sortOrder == SortOrder.latest ? 'Terbaru' : 'Terlama';
+
+  // Helper untuk menentukan label tombol dropdown kategori
+  String get _categoryLabel {
+    if (_selectedCategory == null) return 'Semua Kategori';
+    return Transactions.categoriesOption
+        .firstWhere(
+          (c) => c.id == _selectedCategory,
+          orElse: () => const CategoriesOption('', 'Semua Kategori'),
+        )
+        .label;
+  }
 
   @override
   void dispose() {
@@ -33,18 +46,26 @@ class _TransactionPageState extends State<TransactionsPage> {
 
   List<Transactions> get _hasilFilter {
     final hasil = widget.transactionsList.where((t) {
-        // Bandingkan langsung sebagai bool, tidak lewat String lagi
-        final bool cocokJenis = _selectedMasuk == null || t.masuk == _selectedMasuk;
+      // 1. Filter Jenis (Masuk / Keluar)
+      final bool cocokJenis =
+          _selectedMasuk == null || t.masuk == _selectedMasuk;
 
-        final String query = _searchQuery.trim().toLowerCase();
-        final bool cocokCari = query.isEmpty || t.keterangan.toLowerCase().contains(query);
+      // 2. Filter Pencarian Teks
+      final String query = _searchQuery.trim().toLowerCase();
+      final bool cocokCari =
+          query.isEmpty || t.keterangan.toLowerCase().contains(query);
 
-        return cocokJenis && cocokCari;
+      // 3. Filter Kategori (Diterapkan di sini)
+      final bool cocokKategori =
+          _selectedCategory == null || t.kategori == _selectedCategory;
+
+      return cocokJenis && cocokCari && cocokKategori;
     }).toList();
 
+    // Urutkan berdasarkan tanggal
     hasil.sort((a, b) => _sortOrder == SortOrder.latest
-      ? b.tanggal.compareTo(a.tanggal)
-      : a.tanggal.compareTo(b.tanggal));
+        ? b.tanggal.compareTo(a.tanggal)
+        : a.tanggal.compareTo(b.tanggal));
 
     return hasil;
   }
@@ -55,8 +76,10 @@ class _TransactionPageState extends State<TransactionsPage> {
         Overlay.of(context).context.findRenderObject() as RenderBox;
     final position = RelativeRect.fromRect(
       Rect.fromPoints(
-        button.localToGlobal(Offset(0, button.size.height + 4), ancestor: overlay),
-        button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
+        button.localToGlobal(Offset(0, button.size.height + 4),
+            ancestor: overlay),
+        button.localToGlobal(button.size.bottomRight(Offset.zero),
+            ancestor: overlay),
       ),
       Offset.zero & overlay.size,
     );
@@ -75,18 +98,44 @@ class _TransactionPageState extends State<TransactionsPage> {
     }
   }
 
-  // helper untuk konversi label String dari UI -> bool? untuk state
+  Future<void> _showCategoriesMenu(BuildContext context) async {
+    final RenderBox button = context.findRenderObject() as RenderBox;
+    final RenderBox overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox;
+    final position = RelativeRect.fromRect(
+      Rect.fromPoints(
+        button.localToGlobal(Offset(0, button.size.height + 4),
+            ancestor: overlay),
+        button.localToGlobal(button.size.bottomRight(Offset.zero),
+            ancestor: overlay),
+      ),
+      Offset.zero & overlay.size,
+    );
+
+    final result = await showMenu<String?>(
+      context: context,
+      position: position,
+      items: [
+        const PopupMenuItem(value: null, child: Text('Semua Kategori')),
+        ...Transactions.categoriesOption.map(
+          (k) => PopupMenuItem(value: k.id, child: Text(k.label)),
+        ),
+      ],
+    );
+
+    setState(() => _selectedCategory = result);
+  }
+
   void _handleTypeSelected(String label) {
     setState(() {
       _selectedMasuk = switch (label) {
         'Masuk' => true,
         'Keluar' => false,
-        _ => null, // 'Semua' atau apapun selain itu
+        _ => null,
       };
     });
   }
 
-  // helper untuk konversi bool? -> String label untuk ditampilkan sebagai selected di UI
   String get _selectedTypeLabel {
     return switch (_selectedMasuk) {
       true => 'Masuk',
@@ -149,17 +198,20 @@ class _TransactionPageState extends State<TransactionsPage> {
                           spacing: 12,
                           runSpacing: 12,
                           children: [
-                            TransactionFilterDropdown(
-                              label: 'Semua Kategori',
-                              prefixIcon: Icons.filter_list,
-                              onTap: () {},
+                            Builder(
+                              builder: (context) => TransactionFilterDropdown(
+                                label: _categoryLabel,
+                                prefixIcon: Icons.filter_list,
+                                onTap: () => _showCategoriesMenu(context),
+                              ),
                             ),
                             Builder(
-                              builder:(context) => TransactionFilterDropdown(
+                              builder: (context) => TransactionFilterDropdown(
                                 label: _sortLabel,
                                 prefixIcon: Icons.calendar_today,
-                                onTap: () => _showSortMenu(context)),
-                              )
+                                onTap: () => _showSortMenu(context),
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -171,12 +223,7 @@ class _TransactionPageState extends State<TransactionsPage> {
           ),
           Expanded(
             child: filteredList.isEmpty
-                ? const Center(
-                    child: Text(
-                      'Tidak ada transaksi ditemukan',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  )
+                ? const TransactionEmptyState()
                 : LayoutBuilder(
                     builder: (context, constraints) {
                       int kolom;
@@ -193,7 +240,7 @@ class _TransactionPageState extends State<TransactionsPage> {
                         padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: kolom,
-                          mainAxisExtent: 72, // Tinggi Card ideal untuk ListTile transaksi
+                          mainAxisExtent: 72,
                           mainAxisSpacing: 8,
                           crossAxisSpacing: 8,
                         ),

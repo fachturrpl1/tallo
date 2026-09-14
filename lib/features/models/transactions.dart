@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 
+class CategoriesOption {
+  final String id;
+  final String label;
+
+  const CategoriesOption(
+    this. id,
+    this.label,
+  );
+}
+
 class Transactions {
   final String keterangan;
   final bool masuk;        // diganti ke bool, lebih tepat untuk dibandingkan sebagai jenis transaksi
@@ -15,6 +25,12 @@ class Transactions {
     required this.jumlah,
     required this.tanggal,
   });
+
+  static const List<CategoriesOption> categoriesOption = [
+    CategoriesOption('1', 'Penjualan'),
+    CategoriesOption('2', 'Belanja'),
+    CategoriesOption('3', 'Operasional'),
+  ];
 
   String get jenisLabel => masuk ? 'Masuk' : 'Keluar';
 
@@ -38,17 +54,11 @@ class Transactions {
     return '$dd/$mm/$yyyy';
   }
   // switchcase kategori
-  String get kategoriLabel {
-    switch (kategori) {
-      case '1':
-        return 'Penjualan';
-      case '2':
-        return 'Belanja';
-      case '3':
-        return 'Operasional';
-      default:
-        return 'Kategori tidak valid';
-    }
+  String get categoriesLabel {
+    return categoriesOption.firstWhere(
+      (c) => c.id == kategori,
+      orElse: () => const CategoriesOption('','Kategori tidak ditemukan')
+    ).label;
   }
 
   // 2. Ikon Kategori murni berdasarkan kodeKategori
