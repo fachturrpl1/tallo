@@ -47,7 +47,7 @@ class TransactionCard extends StatelessWidget {
         ),
         // Subtitle (Menampilkan Tanggal • Kategori)
         subtitle: Text(
-          '${transaction.tanggal} • ${transaction.kategoriLabel}',
+          '${transaction.tanggal} • ${transaction.categoriesLabel}',
           style: TextStyle(
             color: colorScheme.onSurfaceVariant,
             fontSize: 12,
