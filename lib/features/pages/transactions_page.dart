@@ -7,6 +7,11 @@ import '../widgets/transactions/card/transactions_card.dart';
 import '../models/transactions.dart';
 import '../models/transaction_sort.dart';
 
+import '../models/transaction_summary.dart';
+import '../widgets/dashboard/transactions_summary.dart';
+
+import 'transaction_detail_page.dart';
+
 class TransactionsPage extends StatefulWidget {
   final List<Transactions> transactionsList;
 
@@ -73,7 +78,7 @@ class _TransactionPageState extends State<TransactionsPage> {
     }
 
     int compareByPrice(Transactions a, Transactions b) {
-      if (_priceSort == null) return 0; // tidak berpengaruh kalau tidak aktif
+      if (_priceSort == null) return 0;
       return _priceSort == PriceSortOrder.highest
           ? b.jumlah.compareTo(a.jumlah)
           : a.jumlah.compareTo(b.jumlah);
@@ -182,6 +187,7 @@ class _TransactionPageState extends State<TransactionsPage> {
   @override
   Widget build(BuildContext context) {
     final filteredList = _hasilFilter;
+    final summary = TransactionSummary.fromList(filteredList);
 
     return Scaffold(
       appBar: AppBar(
@@ -195,11 +201,65 @@ class _TransactionPageState extends State<TransactionsPage> {
       body: Column(
         children: [
           Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: TransactionSummaryBox(summary: summary),
+          ),
+          Padding(
             padding: const EdgeInsets.all(16.0),
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final contentWidth = constraints.maxWidth;
-                final searchWidth = contentWidth < 600 ? contentWidth : 600.0;
+                final searchWidth = contentWidth < 600 ? contentWidth : 715.0;
+                final isNarrow = contentWidth < 600;
+
+                // Gabungkan filter jenis & dropdown ke dalam satu daftar komponen
+                final allFilters = [
+                  TransactionCategoryFilter(
+                    types: const ['Semua', 'Masuk', 'Keluar'],
+                    selectedType: _selectedTypeLabel,
+                    onTypeSelected: _handleTypeSelected,
+                  ),
+                  Builder(
+                    builder: (context) => TransactionFilterDropdown(
+                      label: _categoryLabel,
+                      prefixIcon: Icons.filter_list,
+                      onTap: () => _showCategoriesMenu(context),
+                    ),
+                  ),
+                  Builder(
+                    builder: (context) => TransactionFilterDropdown(
+                      label: _sortLabel,
+                      prefixIcon: Icons.calendar_today,
+                      onTap: () => _showSortMenu(context),
+                    ),
+                  ),
+                  Builder(
+                    builder: (context) => TransactionFilterDropdown(
+                      label: _priceSortLabel,
+                      prefixIcon: Icons.swap_vert,
+                      onTap: () => _showPriceSortMenu(context),
+                    ),
+                  ),
+                ];
+
+                Widget filterBar = isNarrow
+                    ? SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            for (int i = 0; i < allFilters.length; i++) ...[
+                              allFilters[i],
+                              if (i != allFilters.length - 1)
+                                const SizedBox(width: 12),
+                            ],
+                          ],
+                        ),
+                      )
+                    : Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children: allFilters,
+                      );
 
                 return Wrap(
                   alignment: WrapAlignment.spaceBetween,
@@ -218,46 +278,9 @@ class _TransactionPageState extends State<TransactionsPage> {
                         },
                       ),
                     ),
-                    Wrap(
-                      alignment: WrapAlignment.spaceBetween,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      spacing: 12,
-                      runSpacing: 12,
-                      children: [
-                        TransactionCategoryFilter(
-                          types: const ['Semua', 'Masuk', 'Keluar'],
-                          selectedType: _selectedTypeLabel,
-                          onTypeSelected: _handleTypeSelected,
-                        ),
-                        Wrap(
-                          spacing: 12,
-                          runSpacing: 12,
-                          children: [
-                            Builder(
-                              builder: (context) => TransactionFilterDropdown(
-                                label: _categoryLabel,
-                                prefixIcon: Icons.filter_list,
-                                onTap: () => _showCategoriesMenu(context),
-                              ),
-                            ),
-                            Builder(
-                              builder: (context) => TransactionFilterDropdown(
-                                label: _sortLabel,
-                                prefixIcon: Icons.calendar_today,
-                                onTap: () => _showSortMenu(context),
-                              ),
-                            ),
-                            Builder(
-                              builder: (context) => TransactionFilterDropdown(
-                                label: _priceSortLabel,
-                                prefixIcon: Icons.swap_vert,
-                                onTap: () => _showPriceSortMenu(context),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                    isNarrow
+                        ? SizedBox(width: contentWidth, child: filterBar)
+                        : filterBar,
                   ],
                 );
               },
@@ -279,7 +302,8 @@ class _TransactionPageState extends State<TransactionsPage> {
 
                       return GridView.builder(
                         itemCount: filteredList.length,
-                        padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
+                        padding: const EdgeInsets.only(
+                            bottom: 8, left: 8, right: 8),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: kolom,
                           mainAxisExtent: 72,
@@ -288,7 +312,18 @@ class _TransactionPageState extends State<TransactionsPage> {
                         ),
                         itemBuilder: (context, index) {
                           final item = filteredList[index];
-                          return TransactionCard(transaction: item);
+                          return TransactionCard(
+                            transaction: item,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      TransactionDetailPage(transaction: item),
+                                ),
+                              );
+                            },
+                          );
                         },
                       );
                     },
