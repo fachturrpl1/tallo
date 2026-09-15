@@ -7,6 +7,7 @@ import '../widgets/transactions/card/transactions_card.dart';
 import '../models/transactions.dart';
 import '../models/transaction_sort.dart';
 
+import '../models/balance_result.dart';
 import '../models/transaction_summary.dart';
 import '../widgets/dashboard/transactions_summary.dart';
 
@@ -47,7 +48,7 @@ class _TransactionPageState extends State<TransactionsPage> {
 
   String get _categoryLabel {
     if (_selectedCategory == null) return 'Semua Kategori';
-    return Transactions.categoriesOption
+    return categoriesOption // sebelumnya: Transactions.categoriesOption
         .firstWhere(
           (c) => c.id == _selectedCategory,
           orElse: () => const CategoriesOption('', 'Semua Kategori'),
@@ -157,7 +158,7 @@ class _TransactionPageState extends State<TransactionsPage> {
       position: position,
       items: [
         const PopupMenuItem(value: null, child: Text('Semua Kategori')),
-        ...Transactions.categoriesOption.map(
+        ...categoriesOption.map( // sebelumnya: Transactions.categoriesOption
           (k) => PopupMenuItem(value: k.id, child: Text(k.label)),
         ),
       ],
@@ -188,7 +189,7 @@ class _TransactionPageState extends State<TransactionsPage> {
   Widget build(BuildContext context) {
     final filteredList = _filterResult;
     final summary = TransactionSummary.fromList(filteredList);
-    final BalanceResult = countBalance(widget.transactionsList);
+    final balanceResult = calculateBalance(widget.transactionsList); // huruf kecil, bukan BalanceResult
 
     return Scaffold(
       appBar: AppBar(
@@ -213,7 +214,6 @@ class _TransactionPageState extends State<TransactionsPage> {
                 final searchWidth = contentWidth < 600 ? contentWidth : 715.0;
                 final isNarrow = contentWidth < 600;
 
-                // Gabungkan filter jenis & dropdown ke dalam satu daftar komponen
                 final allFilters = [
                   TransactionCategoryFilter(
                     types: const ['Semua', 'Masuk', 'Keluar'],
@@ -315,7 +315,8 @@ class _TransactionPageState extends State<TransactionsPage> {
                           final item = filteredList[index];
                           return TransactionCard(
                             transaction: item,
-                            overBalance: BalanceResult.transactionOverBalance.contains(item),
+                            overBalance:
+                                balanceResult.transactionsOverBalance.contains(item),
                             onTap: () {
                               Navigator.push(
                                 context,
