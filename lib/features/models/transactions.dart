@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
+import 'date.dart';
+
+export 'date.dart';
 
 class CategoriesOption {
   final String id;
@@ -13,10 +16,10 @@ class CategoriesOption {
 
 class Transactions {
   final String keterangan;
-  final bool masuk;        // diganti ke bool, lebih tepat untuk dibandingkan sebagai jenis transaksi
+  final bool masuk;
   final String kategori;
   final int jumlah;
-  final String tanggal;
+  final DateTime tanggal;
 
   Transactions({
     required this.keterangan,
@@ -34,25 +37,13 @@ class Transactions {
 
   String get jenisLabel => masuk ? 'Masuk' : 'Keluar';
 
-  static String inputTanggal(int dd, int mm, int yyyy) {
-    if (mm < 1 || mm > 12) {
-      return 'Bulan tidak valid';
-    }
-
-    int maxHari = 31;
-
-    if (mm == 2) {
-      bool isKabisat =
-          (yyyy % 4 == 0 && yyyy % 100 != 0) || (yyyy % 400 == 0);
-      maxHari = isKabisat ? 29 : 28;
-    } else if (mm == 4 || mm == 6 || mm == 9 || mm == 11) {
-      maxHari = 30;
-    }
-    if (dd < 1 || dd > maxHari) {
-      return 'Tanggal tidak valid untuk bulan dan tahun ini';
-    }
-    return '$dd/$mm/$yyyy';
+  /// Validasi kalender dan tahun kabisat via AppDate
+  static DateTime inputTanggal(int dd, int mm, int yyyy) {
+    return AppDate.parse(dd, mm, yyyy);
   }
+
+  /// Tampilan tanggal dalam format d/M/yyyy (contoh: 10/9/2026)
+  String get tanggalFormatted => AppDate.formatMedium(tanggal);
   // switchcase kategori
   String get categoriesLabel {
     return categoriesOption.firstWhere(
