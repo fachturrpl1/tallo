@@ -10,7 +10,7 @@ import '../widgets/dashboard/transactions_summary.dart';
 import '../widgets/transactions/card/transactions_card.dart';
 import 'transaction_detail_page.dart';
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   final List<Transactions> transactionsList;
   final String userName;
   final bool isDarkMode;
@@ -26,16 +26,65 @@ class DashboardPage extends StatelessWidget {
     this.onViewAllTap,
   });
 
+  @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  // Map untuk menyimpan kuantitas (jumlah item) per transaksi
+  final Map<Transactions, int> _quantities = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _initQuantities();
+  }
+
+  @override
+  void didUpdateWidget(covariant DashboardPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.transactionsList != widget.transactionsList) {
+      _initQuantities();
+    }
+  }
+
+  void _initQuantities() {
+    for (var item in widget.transactionsList) {
+      _quantities.putIfAbsent(item, () => 1);
+    }
+  }
+
+  /// Membuat daftar transaksi yang jumlah nilainya disesuaikan dengan kuantitas
+  List<Transactions> get _calculatedTransactions {
+    return widget.transactionsList.map((item) {
+      final qty = _quantities[item] ?? 1;
+      return Transactions(
+        keterangan: item.keterangan,
+        masuk: item.masuk,
+        kategori: item.kategori,
+        jumlah: item.jumlah * qty,
+        tanggal: item.tanggal,
+      );
+    }).toList();
+  }
+
   List<Transactions> get _recentTransactions {
-    final sorted = [...transactionsList]
+    final sorted = [...widget.transactionsList]
       ..sort((a, b) => b.tanggal.compareTo(a.tanggal));
     return sorted.take(4).toList();
   }
 
+  void _handleQuantityChanged(Transactions item, int newQty) {
+    setState(() {
+      _quantities[item] = newQty;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final summary = TransactionSummary.fromList(transactionsList);
-    final balanceResult = calculateBalance(transactionsList);
+    final computedList = _calculatedTransactions;
+    final summary = TransactionSummary.fromList(computedList);
+    final balanceResult = calculateBalance(computedList);
     final recentTransactions = _recentTransactions;
 
     return Scaffold(
@@ -45,9 +94,9 @@ class DashboardPage extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           children: [
             DashboardGreeting(
-              userName: userName,
-              isDarkMode: isDarkMode,
-              onThemeToggle: onThemeToggle,
+              userName: widget.userName,
+              isDarkMode: widget.isDarkMode,
+              onThemeToggle: widget.onThemeToggle,
             ),
             const SizedBox(height: 16),
             TransactionSummaryBox(
@@ -65,13 +114,13 @@ class DashboardPage extends StatelessWidget {
             DashboardSectionHeader(
               title: 'Transaksi Terbaru',
               actionLabel: 'Lihat Semua',
-              onActionTap: onViewAllTap ??
+              onActionTap: widget.onViewAllTap ??
                   () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => TransactionsPage(
-                          transactionsList: transactionsList,
+                          transactionsList: widget.transactionsList,
                         ),
                       ),
                     );
@@ -85,6 +134,7 @@ class DashboardPage extends StatelessWidget {
                   transaction: item,
                   overBalance:
                       balanceResult.transactionsOverBalance.contains(item),
+                  onQuantityChanged: (qty) => _handleQuantityChanged(item, qty),
                   onTap: () {
                     Navigator.push(
                       context,

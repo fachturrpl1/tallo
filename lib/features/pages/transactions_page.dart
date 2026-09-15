@@ -34,6 +34,36 @@ class _TransactionPageState extends State<TransactionsPage> {
 
   String? _selectedCategory;
 
+  // Key menggunakan indeks posisi transaksi asli agar tidak terjadi instance mismatch
+  final Map<int, int> _quantities = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _initQuantities();
+  }
+
+  @override
+  void didUpdateWidget(covariant TransactionsPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.transactionsList != widget.transactionsList) {
+      _initQuantities();
+    }
+  }
+
+  void _initQuantities() {
+    _quantities.clear();
+    for (int i = 0; i < widget.transactionsList.length; i++) {
+      _quantities[i] = 1;
+    }
+  }
+
+  void _handleQuantityChanged(int originalIndex, int newQty) {
+    setState(() {
+      _quantities[originalIndex] = newQty;
+    });
+  }
+
   String get _sortLabel {
     return _dateOrder == DateSortOrder.latest ? 'Terbaru' : 'Terlama';
   }
@@ -48,7 +78,7 @@ class _TransactionPageState extends State<TransactionsPage> {
 
   String get _categoryLabel {
     if (_selectedCategory == null) return 'Semua Kategori';
-    return categoriesOption // sebelumnya: Transactions.categoriesOption
+    return categoriesOption
         .firstWhere(
           (c) => c.id == _selectedCategory,
           orElse: () => const CategoriesOption('', 'Semua Kategori'),
@@ -62,8 +92,27 @@ class _TransactionPageState extends State<TransactionsPage> {
     super.dispose();
   }
 
-  List<Transactions> get _filterResult {
-    final result = widget.transactionsList.where((t) {
+  // Menyimpan struktur transaksi beserta referensi indeks aslinya
+  List<({int originalIndex, Transactions transaction})> get _calculatedWithIndex {
+    final list = <({int originalIndex, Transactions transaction})>[];
+    for (int i = 0; i < widget.transactionsList.length; i++) {
+      final item = widget.transactionsList[i];
+      final qty = _quantities[i] ?? 1;
+      final calculatedItem = Transactions(
+        keterangan: item.keterangan,
+        masuk: item.masuk,
+        kategori: item.kategori,
+        jumlah: item.jumlah * qty,
+        tanggal: item.tanggal,
+      );
+      list.add((originalIndex: i, transaction: calculatedItem));
+    }
+    return list;
+  }
+
+  List<({int originalIndex, Transactions transaction})> get _filterResult {
+    final result = _calculatedWithIndex.where((entry) {
+      final t = entry.transaction;
       final bool cocokJenis = _selectedMasuk == null || t.masuk == _selectedMasuk;
       final String query = _searchQuery.trim().toLowerCase();
       final bool cocokCari = query.isEmpty || t.keterangan.toLowerCase().contains(query);
@@ -85,7 +134,9 @@ class _TransactionPageState extends State<TransactionsPage> {
           : a.jumlah.compareTo(b.jumlah);
     }
 
-    result.sort((a, b) {
+    result.sort((entryA, entryB) {
+      final a = entryA.transaction;
+      final b = entryB.transaction;
       if (_sortPriority == SortPriority.price && _priceSort != null) {
         final primary = compareByPrice(a, b);
         return primary != 0 ? primary : compareByDate(a, b);
@@ -158,7 +209,7 @@ class _TransactionPageState extends State<TransactionsPage> {
       position: position,
       items: [
         const PopupMenuItem(value: null, child: Text('Semua Kategori')),
-        ...categoriesOption.map( // sebelumnya: Transactions.categoriesOption
+        ...categoriesOption.map(
           (k) => PopupMenuItem(value: k.id, child: Text(k.label)),
         ),
       ],
@@ -187,9 +238,12 @@ class _TransactionPageState extends State<TransactionsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final filteredList = _filterResult;
+    final filteredEntries = _filterResult;
+    final filteredList = filteredEntries.map((e) => e.transaction).toList();
+    final allCalculatedList = _calculatedWithIndex.map((e) => e.transaction).toList();
+
     final summary = TransactionSummary.fromList(filteredList);
-    final balanceResult = calculateBalance(widget.transactionsList); // huruf kecil, bukan BalanceResult
+    final balanceResult = calculateBalance(allCalculatedList);
 
     return Scaffold(
       appBar: AppBar(
@@ -206,7 +260,8 @@ class _TransactionPageState extends State<TransactionsPage> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: TransactionSummaryBox(
               summary: summary,
-              ),
+              saldo: balanceResult.finalBalance,
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -290,7 +345,7 @@ class _TransactionPageState extends State<TransactionsPage> {
             ),
           ),
           Expanded(
-            child: filteredList.isEmpty
+            child: filteredEntries.isEmpty
                 ? const TransactionEmptyState()
                 : LayoutBuilder(
                     builder: (context, constraints) {
@@ -304,7 +359,7 @@ class _TransactionPageState extends State<TransactionsPage> {
                       }
 
                       return GridView.builder(
-                        itemCount: filteredList.length,
+                        itemCount: filteredEntries.length,
                         padding: const EdgeInsets.only(
                             bottom: 8, left: 8, right: 8),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -314,17 +369,21 @@ class _TransactionPageState extends State<TransactionsPage> {
                           crossAxisSpacing: 8,
                         ),
                         itemBuilder: (context, index) {
-                          final item = filteredList[index];
+                          final entry = filteredEntries[index];
+
                           return TransactionCard(
-                            transaction: item,
+                            key: ValueKey('tx_${entry.originalIndex}'),
+                            transaction: entry.transaction,
                             overBalance:
-                                balanceResult.transactionsOverBalance.contains(item),
+                                balanceResult.transactionsOverBalance.contains(entry.transaction),
+                            onQuantityChanged: (qty) =>
+                                _handleQuantityChanged(entry.originalIndex, qty),
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      TransactionDetailPage(transaction: item),
+                                      TransactionDetailPage(transaction: entry.transaction),
                                 ),
                               );
                             },
