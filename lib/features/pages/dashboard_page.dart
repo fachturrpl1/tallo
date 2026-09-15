@@ -31,7 +31,6 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  // Map untuk menyimpan kuantitas (jumlah item) per transaksi
   final Map<Transactions, int> _quantities = {};
 
   @override
@@ -54,7 +53,6 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
-  /// Membuat daftar transaksi yang jumlah nilainya disesuaikan dengan kuantitas
   List<Transactions> get _calculatedTransactions {
     return widget.transactionsList.map((item) {
       final qty = _quantities[item] ?? 1;
@@ -75,9 +73,28 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   void _handleQuantityChanged(Transactions item, int newQty) {
-    setState(() {
-      _quantities[item] = newQty;
-    });
+    final tempQuantities = Map<Transactions, int>.from(_quantities);
+    tempQuantities[item] = newQty;
+
+    final testList = widget.transactionsList.map((tx) {
+      final qty = tempQuantities[tx] ?? 1;
+      return Transactions(
+        keterangan: tx.keterangan,
+        masuk: tx.masuk,
+        kategori: tx.kategori,
+        jumlah: tx.jumlah * qty,
+        tanggal: tx.tanggal,
+      );
+    }).toList();
+
+    // Memanggil fungsi validasi dari models
+    bool isValid = validateQuantityChange(context: context, simulatedList: testList);
+
+    if (isValid) {
+      setState(() {
+        _quantities[item] = newQty;
+      });
+    }
   }
 
   @override
@@ -105,10 +122,10 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
             const SizedBox(height: 24),
             DashboardQuickActions(
-              onTambahTap: () {}, // TODO: navigasi ke form tambah transaksi
-              onKategoriTap: () {}, // TODO: navigasi ke halaman kategori
-              onLaporanTap: () {}, // TODO: navigasi ke halaman laporan
-              onLainnyaTap: () {}, // TODO: menu lainnya
+              onTambahTap: () {},
+              onKategoriTap: () {},
+              onLaporanTap: () {},
+              onLainnyaTap: () {},
             ),
             const SizedBox(height: 24),
             DashboardSectionHeader(
@@ -134,6 +151,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   transaction: item,
                   overBalance:
                       balanceResult.transactionsOverBalance.contains(item),
+                  currentQuantity: _quantities[item] ?? 1,
                   onQuantityChanged: (qty) => _handleQuantityChanged(item, qty),
                   onTap: () {
                     Navigator.push(

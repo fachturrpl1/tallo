@@ -29,7 +29,7 @@ final List<Transactions> transactionsList = [
     keterangan: 'Belanja Bahan Makanan',
     masuk: false,
     kategori: '2',
-    jumlah: 150000,
+    jumlah: 300000,
     tanggal: Transactions.inputTanggal(12, 9, 2026),
   ),
   Transactions(

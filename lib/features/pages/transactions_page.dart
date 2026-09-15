@@ -6,11 +6,9 @@ import '../widgets/transactions/dropdown/transaction_dropdown_filter.dart';
 import '../widgets/transactions/card/transactions_card.dart';
 import '../models/transactions.dart';
 import '../models/transaction_sort.dart';
-
 import '../models/balance_result.dart';
 import '../models/transaction_summary.dart';
 import '../widgets/dashboard/transactions_summary.dart';
-
 import 'transaction_detail_page.dart';
 
 class TransactionsPage extends StatefulWidget {
@@ -33,8 +31,6 @@ class _TransactionPageState extends State<TransactionsPage> {
   SortPriority _sortPriority = SortPriority.date;
 
   String? _selectedCategory;
-
-  // Key menggunakan indeks posisi transaksi asli agar tidak terjadi instance mismatch
   final Map<int, int> _quantities = {};
 
   @override
@@ -59,14 +55,33 @@ class _TransactionPageState extends State<TransactionsPage> {
   }
 
   void _handleQuantityChanged(int originalIndex, int newQty) {
-    setState(() {
-      _quantities[originalIndex] = newQty;
-    });
+    final tempQuantities = Map<int, int>.from(_quantities);
+    tempQuantities[originalIndex] = newQty;
+
+    final testList = <Transactions>[];
+    for (int i = 0; i < widget.transactionsList.length; i++) {
+      final item = widget.transactionsList[i];
+      final qty = tempQuantities[i] ?? 1;
+      testList.add(Transactions(
+        keterangan: item.keterangan,
+        masuk: item.masuk,
+        kategori: item.kategori,
+        jumlah: item.jumlah * qty,
+        tanggal: item.tanggal,
+      ));
+    }
+
+    // Memanggil fungsi validasi dari models
+    bool isValid = validateQuantityChange(context: context, simulatedList: testList);
+
+    if (isValid) {
+      setState(() {
+        _quantities[originalIndex] = newQty;
+      });
+    }
   }
 
-  String get _sortLabel {
-    return _dateOrder == DateSortOrder.latest ? 'Terbaru' : 'Terlama';
-  }
+  String get _sortLabel => _dateOrder == DateSortOrder.latest ? 'Terbaru' : 'Terlama';
 
   String get _priceSortLabel {
     return switch (_priceSort) {
@@ -92,7 +107,6 @@ class _TransactionPageState extends State<TransactionsPage> {
     super.dispose();
   }
 
-  // Menyimpan struktur transaksi beserta referensi indeks aslinya
   List<({int originalIndex, Transactions transaction})> get _calculatedWithIndex {
     final list = <({int originalIndex, Transactions transaction})>[];
     for (int i = 0; i < widget.transactionsList.length; i++) {
@@ -164,7 +178,6 @@ class _TransactionPageState extends State<TransactionsPage> {
 
   Future<void> _showSortMenu(BuildContext context) async {
     final position = _menuPositionOf(context);
-
     final result = await showMenu<DateSortOrder>(
       context: context,
       position: position,
@@ -184,7 +197,6 @@ class _TransactionPageState extends State<TransactionsPage> {
 
   Future<void> _showPriceSortMenu(BuildContext context) async {
     final position = _menuPositionOf(context);
-
     final result = await showMenu<PriceSortOrder?>(
       context: context,
       position: position,
@@ -203,7 +215,6 @@ class _TransactionPageState extends State<TransactionsPage> {
 
   Future<void> _showCategoriesMenu(BuildContext context) async {
     final position = _menuPositionOf(context);
-
     final result = await showMenu<String?>(
       context: context,
       position: position,
@@ -249,9 +260,7 @@ class _TransactionPageState extends State<TransactionsPage> {
       appBar: AppBar(
         title: const Text(
           'Transaksi',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       body: Column(
@@ -376,6 +385,7 @@ class _TransactionPageState extends State<TransactionsPage> {
                             transaction: entry.transaction,
                             overBalance:
                                 balanceResult.transactionsOverBalance.contains(entry.transaction),
+                            currentQuantity: _quantities[entry.originalIndex] ?? 1,
                             onQuantityChanged: (qty) =>
                                 _handleQuantityChanged(entry.originalIndex, qty),
                             onTap: () {

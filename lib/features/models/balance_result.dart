@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'transactions.dart';
 
 class BalanceResult {
@@ -28,4 +29,44 @@ BalanceResult calculateBalance(List<Transactions> transactionsList) {
   }
 
   return BalanceResult(finalBalance: balance, transactionsOverBalance: exceeded);
+}
+
+/// Fungsi validasi saldo & pemanggil SnackBar merah yang terpusat di models
+bool validateQuantityChange({
+  required BuildContext context,
+  required List<Transactions> simulatedList,
+}) {
+  final testResult = calculateBalance(simulatedList);
+
+  if (testResult.finalBalance < 0 || testResult.transactionsOverBalance.isNotEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Row(
+          children: [
+            Icon(Icons.error_outline, color: Colors.white),
+            SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'Peringatan: Saldo tidak boleh kurang dari atau sama dengan 0!',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.red[700],
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        duration: const Duration(seconds: 3),
+      ),
+    );
+    return false; // Tidak aman / melanggar batas
+  }
+
+  return true; // Aman
 }
