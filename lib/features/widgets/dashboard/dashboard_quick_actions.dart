@@ -44,7 +44,6 @@ class DashboardQuickActions extends StatelessWidget {
     );
   }
 }
-
 class _QuickActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -62,24 +61,36 @@ class _QuickActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(32),
+    return SizedBox(
+      width: 64,
       child: Column(
         children: [
-          CircleAvatar(
-            radius: 24,
-            backgroundColor:
-                highlighted ? colorScheme.primary : colorScheme.surfaceContainerLow,
-            child: Icon(
-              icon,
-              color: highlighted ? colorScheme.onPrimary : colorScheme.onSurfaceVariant,
+          Material( // tambahan — supaya InkWell punya ripple layer sendiri, terbatas di lingkaran
+            color: Colors.transparent,
+            shape: const CircleBorder(),
+            clipBehavior: Clip.antiAlias, // memotong ripple supaya tetap dalam lingkaran
+            child: InkWell(
+              onTap: onTap,
+              customBorder: const CircleBorder(), // ripple mengikuti bentuk lingkaran, bukan kotak
+              child: CircleAvatar(
+                radius: 24,
+                backgroundColor:
+                    highlighted ? colorScheme.primary : colorScheme.surfaceContainerLow,
+                child: Icon(
+                  icon,
+                  color: highlighted ? colorScheme.onPrimary : colorScheme.onSurfaceVariant,
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 6),
-          Text(
-            label,
-            style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
+          GestureDetector( // tambahan — label ikut bisa di-tap juga, tapi tanpa ripple
+            onTap: onTap,
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
+            ),
           ),
         ],
       ),

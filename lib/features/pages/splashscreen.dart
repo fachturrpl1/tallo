@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import '../models/transactions.dart';
-import 'transactions_page.dart';
+import 'dashboard_page.dart'; // ganti dari 'transactions_page.dart'
 
 class SplashScreen extends StatefulWidget {
   final List<Transactions> transactionsList;
+  final bool isDarkMode; // tambahan — field yang sebelumnya hilang
+  final VoidCallback onThemeToggle; // tambahan — field yang sebelumnya hilang
 
-  const SplashScreen({super.key, required this.transactionsList});
+  const SplashScreen({
+    super.key,
+    required this.transactionsList,
+    required this.isDarkMode,
+    required this.onThemeToggle,
+  });
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -24,8 +31,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (context) => TransactionsPage(
+        builder: (context) => DashboardPage( // ganti dari TransactionsPage
           transactionsList: widget.transactionsList,
+          isDarkMode: widget.isDarkMode, // tambahan
+          onThemeToggle: widget.onThemeToggle, // tambahan
         ),
       ),
     );

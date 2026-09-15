@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tallo/features/pages/dashboard_page.dart';
-import 'package:tallo/features/pages/splashscreen.dart';
+import 'features/pages/splashscreen.dart';
 import 'features/models/transactions.dart';
 import 'core/theme/app_theme.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -73,17 +72,33 @@ final List<Transactions> transactionsList = [
   ),
 ];
 
-class TalloApp extends StatelessWidget {
+class TalloApp extends StatefulWidget {
   const TalloApp({super.key});
 
+  @override
+  State<TalloApp> createState() => _TalloAppState();
+}
+
+class _TalloAppState extends State<TalloApp> {
+  ThemeMode _themeMode = ThemeMode.light;
+
+  void _toggleTheme() {
+    setState(() {
+      _themeMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.light,
-      home: DashboardPage(transactionsList: transactionsList),
+      themeMode: _themeMode,
+      home: SplashScreen(
+        transactionsList: transactionsList,
+        isDarkMode: _themeMode == ThemeMode.dark, // tambahan
+        onThemeToggle: _toggleTheme, // tambahan
+      ),
     );
   }
 }

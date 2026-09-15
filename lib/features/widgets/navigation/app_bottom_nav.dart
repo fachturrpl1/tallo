@@ -45,7 +45,6 @@ class AppBottomNav extends StatelessWidget {
               selected: currentIndex == 1,
               onTap: () => onTabSelected?.call(1),
             ),
-            _AddButton(onTap: onAddTap),
             _NavItem(
               icon: Icons.grid_view_rounded,
               label: 'Kategori',

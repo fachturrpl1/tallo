@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tallo/features/pages/transactions_page.dart';
 import '../models/transactions.dart';
 import '../models/transaction_summary.dart';
 import '../models/balance_result.dart';
@@ -8,16 +9,21 @@ import '../widgets/dashboard/dashboard_section_header.dart';
 import '../widgets/dashboard/transactions_summary.dart';
 import '../widgets/transactions/card/transactions_card.dart';
 import 'transaction_detail_page.dart';
-import 'transactions_page.dart';
 
 class DashboardPage extends StatelessWidget {
   final List<Transactions> transactionsList;
   final String userName;
+  final bool isDarkMode;
+  final VoidCallback? onThemeToggle;
+  final VoidCallback? onViewAllTap;
 
   const DashboardPage({
     super.key,
     required this.transactionsList,
-    this.userName = 'Fachtur',
+    this.userName = 'Andi',
+    required this.isDarkMode,
+    this.onThemeToggle,
+    this.onViewAllTap,
   });
 
   List<Transactions> get _recentTransactions {
@@ -28,20 +34,20 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ringkasan & saldo dihitung dari SELURUH data (bukan hasil filter),
-    // karena dashboard menampilkan kondisi keuangan keseluruhan.
     final summary = TransactionSummary.fromList(transactionsList);
     final balanceResult = calculateBalance(transactionsList);
     final recentTransactions = _recentTransactions;
 
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
             DashboardGreeting(
               userName: userName,
-              onNotificationTap: () {}, // TODO: fitur notifikasi belum ada
+              isDarkMode: isDarkMode,
+              onThemeToggle: onThemeToggle,
             ),
             const SizedBox(height: 16),
             TransactionSummaryBox(
@@ -59,15 +65,17 @@ class DashboardPage extends StatelessWidget {
             DashboardSectionHeader(
               title: 'Transaksi Terbaru',
               actionLabel: 'Lihat Semua',
-              onActionTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        TransactionsPage(transactionsList: transactionsList),
-                  ),
-                );
-              },
+              onActionTap: onViewAllTap ??
+                  () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TransactionsPage(
+                          transactionsList: transactionsList,
+                        ),
+                      ),
+                    );
+                  },
             ),
             const SizedBox(height: 8),
             ...recentTransactions.map(

@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 class DashboardGreeting extends StatelessWidget {
   final String userName;
-  final VoidCallback? onNotificationTap;
+  final bool isDarkMode;
+  final VoidCallback? onThemeToggle;
 
   const DashboardGreeting({
     super.key,
     required this.userName,
-    this.onNotificationTap,
+    required this.isDarkMode,
+    this.onThemeToggle,
   });
 
   @override
@@ -41,9 +43,9 @@ class DashboardGreeting extends StatelessWidget {
           ),
         ),
         IconButton(
-          onPressed: onNotificationTap,
+          onPressed: onThemeToggle,
           icon: Icon(
-            Icons.notifications_none_rounded,
+            isDarkMode ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
             color: colorScheme.onSurface,
           ),
         ),
