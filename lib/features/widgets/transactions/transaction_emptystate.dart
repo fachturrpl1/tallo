@@ -8,8 +8,7 @@ class TransactionEmptyState extends StatelessWidget {
   const TransactionEmptyState({
     super.key,
     this.title = 'Belum ada transaksi',
-    this.subtitle =
-        'Catat pemasukan atau pengeluaran pertama untuk mulai melihat arus uangmu.',
+    this.subtitle ='Catat pemasukan atau pengeluaran pertama untuk mulai melihat arus uangmu.',
     this.action,
   });
 

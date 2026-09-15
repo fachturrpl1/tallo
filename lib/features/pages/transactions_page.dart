@@ -61,8 +61,8 @@ class _TransactionPageState extends State<TransactionsPage> {
     super.dispose();
   }
 
-  List<Transactions> get _hasilFilter {
-    final hasil = widget.transactionsList.where((t) {
+  List<Transactions> get _filterResult {
+    final result = widget.transactionsList.where((t) {
       final bool cocokJenis = _selectedMasuk == null || t.masuk == _selectedMasuk;
       final String query = _searchQuery.trim().toLowerCase();
       final bool cocokCari = query.isEmpty || t.keterangan.toLowerCase().contains(query);
@@ -84,7 +84,7 @@ class _TransactionPageState extends State<TransactionsPage> {
           : a.jumlah.compareTo(b.jumlah);
     }
 
-    hasil.sort((a, b) {
+    result.sort((a, b) {
       if (_sortPriority == SortPriority.price && _priceSort != null) {
         final primary = compareByPrice(a, b);
         return primary != 0 ? primary : compareByDate(a, b);
@@ -94,7 +94,7 @@ class _TransactionPageState extends State<TransactionsPage> {
       }
     });
 
-    return hasil;
+    return result;
   }
 
   RelativeRect _menuPositionOf(BuildContext context) {
@@ -186,13 +186,14 @@ class _TransactionPageState extends State<TransactionsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final filteredList = _hasilFilter;
+    final filteredList = _filterResult;
     final summary = TransactionSummary.fromList(filteredList);
+    final BalanceResult = countBalance(widget.transactionsList);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Transaksi',
+          'Tallo',
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -314,6 +315,7 @@ class _TransactionPageState extends State<TransactionsPage> {
                           final item = filteredList[index];
                           return TransactionCard(
                             transaction: item,
+                            overBalance: BalanceResult.transactionOverBalance.contains(item),
                             onTap: () {
                               Navigator.push(
                                 context,

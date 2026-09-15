@@ -25,9 +25,15 @@ class Transactions {
     required this.keterangan,
     required this.masuk,
     required this.kategori,
-    required this.jumlah,
+    required int jumlah,
     required this.tanggal,
-  });
+  }) :
+    assert(jumlah > 0, 'Jumlah transaksi harus lebih dari 0'),
+    jumlah = jumlah {
+      if (jumlah <= 0) {
+        throw ArgumentError.value(jumlah, 'jumlah', 'Jumlah transaksi harus lebih dari 0');
+      }
+    }
 
   static const List<CategoriesOption> categoriesOption = [
     CategoriesOption('1', 'Penjualan'),
@@ -105,24 +111,36 @@ class Transactions {
   }
 }
 
-int hitungSaldo(List<Transactions> transactionsList) {
-  int saldo = 0;
+class BalanceResult {
+  final int lastBalance;
+  final List<Transactions> transactionOverBalance;
 
-  for (Transactions transaksi in transactionsList) {
-    if (transaksi.jumlah <= 0) {
-      print('jumlah tidak valid');
-      continue;
-    }
+  const BalanceResult({
+    required this.lastBalance,
+    required this.transactionOverBalance,
+  });
+}
 
+BalanceResult countBalance(List<Transactions> transactionsList) {
+  int balance = 0;
+  final over = <Transactions>[];
+
+  // urutkan dulu berdasarkan tanggal — saldo berjalan HARUS kronologis,
+  // tidak boleh bergantung pada urutan filter/sort UI
+  final terurut = [...transactionsList]
+    ..sort((a, b) => a.tanggal.compareTo(b.tanggal));
+
+  for (final transaksi in terurut) {
     if (transaksi.masuk) {
-      saldo += transaksi.jumlah;
+      balance += transaksi.jumlah;
+    } else if (transaksi.jumlah > balance) {
+      over.add(transaksi); // ditandai, bukan cuma di-print
     } else {
-      if (transaksi.jumlah > saldo) {
-        print('melebihi saldo');
-      } else {
-        saldo -= transaksi.jumlah;
-      }
+      balance -= transaksi.jumlah;
     }
   }
-  return saldo;
+
+  return BalanceResult(
+    lastBalance: balance, 
+    transactionOverBalance: over);
 }

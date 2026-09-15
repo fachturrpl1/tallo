@@ -4,11 +4,13 @@ import '../../../models/transactions.dart';
 
 class TransactionCard extends StatelessWidget {
   final Transactions transaction;
+  final bool overBalance;
   final VoidCallback? onTap;
 
   const TransactionCard({
     super.key,
     required this.transaction,
+    this.overBalance = false,
     this.onTap,
   });
 

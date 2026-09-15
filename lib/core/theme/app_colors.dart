@@ -1,4 +1,3 @@
-// app_colors.dart — versi final, tanpa duplikasi
 import 'package:flutter/material.dart';
 
 @immutable
