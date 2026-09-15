@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (context) => TransactionsPage(
-          transactionsList: widget.transactionsList, // <-- diteruskan, bukan []
+          transactionsList: widget.transactionsList,
         ),
       ),
     );
