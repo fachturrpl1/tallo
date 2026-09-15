@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tallo/features/pages/dashboard_page.dart';
 import 'package:tallo/features/pages/splashscreen.dart';
 import 'features/models/transactions.dart';
 import 'core/theme/app_theme.dart';
@@ -81,8 +82,8 @@ class TalloApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.dark,
-      home: SplashScreen(transactionsList: transactionsList),
+      themeMode: ThemeMode.light,
+      home: DashboardPage(transactionsList: transactionsList),
     );
   }
 }

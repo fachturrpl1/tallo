@@ -194,7 +194,7 @@ class _TransactionPageState extends State<TransactionsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Tallo',
+          'Transaksi',
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -204,7 +204,9 @@ class _TransactionPageState extends State<TransactionsPage> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: TransactionSummaryBox(summary: summary),
+            child: TransactionSummaryBox(
+              summary: summary,
+              ),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
