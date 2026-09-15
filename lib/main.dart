@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:tallo/features/pages/splashscreen.dart';
 import 'features/models/transactions.dart';
 import 'core/theme/app_theme.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id',null);
   runApp(const TalloApp());
 }
 
@@ -78,7 +81,7 @@ class TalloApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.dark,
       home: SplashScreen(transactionsList: transactionsList),
     );
   }
