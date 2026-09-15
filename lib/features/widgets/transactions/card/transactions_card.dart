@@ -4,10 +4,12 @@ import '../../../models/transactions.dart';
 
 class TransactionCard extends StatelessWidget {
   final Transactions transaction;
+  final VoidCallback? onTap;
 
   const TransactionCard({
     super.key,
     required this.transaction,
+    this.onTap,
   });
 
   @override
@@ -25,7 +27,9 @@ class TransactionCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         side: BorderSide.none,
       ),
+      clipBehavior: Clip.antiAlias,
       child: ListTile(
+        onTap: onTap,
         contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
         leading: CircleAvatar(
           radius: 20,
@@ -36,23 +40,25 @@ class TransactionCard extends StatelessWidget {
             size: 20,
           ),
         ),
-        // Judul Utama (Menampilkan Keterangan)
-        title: Text(
-          transaction.keterangan,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-            color: colorScheme.onSurface,
-          ),
+      title: Text(
+        transaction.keterangan,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+          color: colorScheme.onSurface,
         ),
-        // Subtitle (Menampilkan Tanggal • Kategori)
-        subtitle: Text(
-          '${transaction.tanggal} • ${transaction.categoriesLabel}',
-          style: TextStyle(
-            color: colorScheme.onSurfaceVariant,
-            fontSize: 12,
-          ),
+      ),
+      subtitle: Text(
+        '${transaction.tanggalFormatted} • ${transaction.categoriesLabel}',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          color: colorScheme.onSurfaceVariant,
+          fontSize: 12,
         ),
+      ),
         trailing: Text(
           '$amountPrefix${currencyFormat.format(transaction.jumlah)}',
           style: TextStyle(
